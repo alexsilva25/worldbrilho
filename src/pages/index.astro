@@ -42,7 +42,7 @@ const services = [
       <section class="section process" id="processo"><div class="container"><div class="section-heading compact"><p class="eyebrow dark">Como funciona</p><h2>Simples do orçamento à entrega</h2></div><ol class="steps"><li><span>1</span><div><h3>Envie fotos</h3><p>Mostre o item e conte o que precisa pelo WhatsApp.</p></div></li><li><span>2</span><div><h3>Receba o orçamento</h3><p>Avaliamos o serviço e combinamos o melhor horário.</p></div></li><li><span>3</span><div><h3>Acompanhe a limpeza</h3><p>Executamos o processo com atenção a cada detalhe.</p></div></li><li><span>4</span><div><h3>Aproveite o resultado</h3><p>Seu estofado renovado, limpo e pronto para usar.</p></div></li></ol></div></section>
 
       <section class="testimonials" id="depoimentos"><div class="container testimonials-layout">
-        <div class="testimonials-intro"><p class="eyebrow">Depoimentos</p><h2>Seu elogio também pode aparecer aqui.</h2><p>Já recebeu um atendimento da World Brilho? Conte como foi sua experiência. O depoimento será publicado depois da nossa aprovação.</p>
+        <div class="testimonials-intro"><p class="eyebrow">Depoimentos</p><h2>Seu elogio também pode aparecer aqui.</h2><p>Já recebeu um atendimento da World Brilho? Conte como foi sua experiência. O depoimento será salvo e publicado automaticamente.</p>
           <form class="testimonial-form" id="testimonial-form">
             <label>Seu nome<input name="name" maxlength="60" required autocomplete="name" /></label>
             <label>Serviço realizado<select name="service" required><option value="">Selecione</option><option>Limpeza interna de carro</option><option>Higienização de sofá</option><option>Higienização de colchão</option><option>Outro serviço</option></select></label>
@@ -87,7 +87,8 @@ const services = [
         try {
           const response = await fetch('/api/testimonials', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(data) });
           if (!response.ok) throw new Error();
-          testimonialForm.reset(); testimonialStatus.textContent = 'Obrigado! Seu depoimento foi salvo e aguarda aprovação.';
+          testimonialForm.reset(); testimonialStatus.textContent = 'Obrigado! Seu depoimento foi salvo e já aparece na página.';
+          const items = await fetch('/api/testimonials').then((result) => result.json()); renderTestimonials(items);
         } catch { testimonialStatus.textContent = 'Não foi possível enviar agora. Tente novamente em instantes.'; }
       });
     </script>

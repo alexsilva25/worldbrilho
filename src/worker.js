@@ -11,11 +11,6 @@ async function prepare(db) {
   )`).run();
 }
 
-const authorized = (request, env) => {
-  const supplied = request.headers.get('x-admin-password') || '';
-  return supplied.length > 0 && supplied === env.ADMIN_PASSWORD;
-};
-
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -32,21 +27,8 @@ export default {
       const service = String(body?.service || '').trim();
       const message = String(body?.message || '').trim();
       if (!name || !service || message.length < 5 || name.length > 60 || service.length > 80 || message.length > 500) return json({ error: 'Dados inválidos' }, 400);
-      await env.DB.prepare('INSERT INTO testimonials (name, service, message) VALUES (?, ?, ?)').bind(name, service, message).run();
+      await env.DB.prepare('INSERT INTO testimonials (name, service, message, approved) VALUES (?, ?, ?, 1)').bind(name, service, message).run();
       return json({ ok: true }, 201);
-    }
-    if (url.pathname === '/api/admin/testimonials' && request.method === 'GET') {
-      if (!authorized(request, env)) return json({ error: 'Não autorizado' }, 401);
-      const { results } = await env.DB.prepare('SELECT id, name, service, message, approved, created_at FROM testimonials ORDER BY id DESC LIMIT 100').all();
-      return json(results);
-    }
-    const match = url.pathname.match(/^\/api\/admin\/testimonials\/(\d+)$/);
-    if (match && request.method === 'PATCH') {
-      if (!authorized(request, env)) return json({ error: 'Não autorizado' }, 401);
-      const body = await request.json().catch(() => null);
-      const approved = body?.approved ? 1 : 0;
-      await env.DB.prepare('UPDATE testimonials SET approved = ? WHERE id = ?').bind(approved, Number(match[1])).run();
-      return json({ ok: true });
     }
     return json({ error: 'Não encontrado' }, 404);
   }
