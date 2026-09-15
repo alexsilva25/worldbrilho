@@ -68,6 +68,19 @@
   line-height: 1;
 }
 
+.testimonial-form { display: grid; gap: 1rem; margin-top: 1.5rem; }
+.testimonial-form label { display: grid; gap: .4rem; font-weight: 700; }
+.testimonial-form input, .testimonial-form select, .testimonial-form textarea { width: 100%; border: 1px solid rgba(255,255,255,.25); border-radius: .7rem; padding: .85rem 1rem; background: rgba(255,255,255,.08); color: inherit; font: inherit; }
+.testimonial-form select option { color: #071a2e; }
+.testimonial-form textarea { resize: vertical; }
+.form-status { min-height: 1.5em; font-weight: 700; }
+.admin-page { background: #eef5f5; color: #071a2e; }
+.admin-shell { width: min(760px, calc(100% - 2rem)); margin: 4rem auto; }
+.admin-page .testimonial-form { max-width: 420px; }
+.admin-page .testimonial-form input { background: white; border-color: #cbd7dc; }
+.admin-reviews { display: grid; gap: 1rem; margin-top: 2rem; }
+.admin-reviews article { background: white; padding: 1.4rem; border-radius: 1rem; box-shadow: 0 10px 30px rgba(7,26,46,.08); }
+
 .testimonial-cards h3 {
   margin-bottom: 14px;
 }

@@ -42,8 +42,15 @@ const services = [
       <section class="section process" id="processo"><div class="container"><div class="section-heading compact"><p class="eyebrow dark">Como funciona</p><h2>Simples do orçamento à entrega</h2></div><ol class="steps"><li><span>1</span><div><h3>Envie fotos</h3><p>Mostre o item e conte o que precisa pelo WhatsApp.</p></div></li><li><span>2</span><div><h3>Receba o orçamento</h3><p>Avaliamos o serviço e combinamos o melhor horário.</p></div></li><li><span>3</span><div><h3>Acompanhe a limpeza</h3><p>Executamos o processo com atenção a cada detalhe.</p></div></li><li><span>4</span><div><h3>Aproveite o resultado</h3><p>Seu estofado renovado, limpo e pronto para usar.</p></div></li></ol></div></section>
 
       <section class="testimonials" id="depoimentos"><div class="container testimonials-layout">
-        <div class="testimonials-intro"><p class="eyebrow">Depoimentos</p><h2>Seu elogio também pode aparecer aqui.</h2><p>Já recebeu um atendimento da World Brilho? Conte como foi sua experiência. Com sua autorização, podemos compartilhar seu depoimento neste espaço.</p><a class="button" href={wa('Olá! Já fui atendido pela World Brilho e quero enviar meu depoimento.')} target="_blank" rel="noopener">Enviar meu depoimento</a></div>
-        <div class="testimonial-cards" aria-label="Espaços para depoimentos de clientes"><article><span class="quote-mark" aria-hidden="true">“</span><h3>Conte como ficou seu estofado</h3><p>Este espaço está reservado para a avaliação de um cliente atendido pela World Brilho.</p><small>Depoimento de cliente</small></article><article><span class="quote-mark" aria-hidden="true">“</span><h3>Compartilhe sua experiência</h3><p>Envie seu elogio pelo WhatsApp e ajude outras pessoas a conhecerem nosso trabalho.</p><small>Sua opinião importa</small></article></div>
+        <div class="testimonials-intro"><p class="eyebrow">Depoimentos</p><h2>Seu elogio também pode aparecer aqui.</h2><p>Já recebeu um atendimento da World Brilho? Conte como foi sua experiência. O depoimento será publicado depois da nossa aprovação.</p>
+          <form class="testimonial-form" id="testimonial-form">
+            <label>Seu nome<input name="name" maxlength="60" required autocomplete="name" /></label>
+            <label>Serviço realizado<select name="service" required><option value="">Selecione</option><option>Limpeza interna de carro</option><option>Higienização de sofá</option><option>Higienização de colchão</option><option>Outro serviço</option></select></label>
+            <label>Seu depoimento<textarea name="message" maxlength="500" rows="4" required placeholder="Conte como foi sua experiência"></textarea></label>
+            <button class="button" type="submit">Enviar depoimento</button><p class="form-status" id="testimonial-status" role="status"></p>
+          </form>
+        </div>
+        <div class="testimonial-cards" id="testimonial-list" aria-live="polite"><article class="testimonial-empty"><span class="quote-mark" aria-hidden="true">“</span><h3>Opiniões de nossos clientes</h3><p>Os depoimentos aprovados aparecerão aqui.</p><small>World Brilho</small></article></div>
       </div></section>
 
       <section class="section faq" id="duvidas"><div class="container faq-layout"><div><p class="eyebrow dark">Dúvidas frequentes</p><h2>Antes de agendar</h2><p>Se ainda ficar alguma dúvida, é só chamar. O atendimento é direto e sem compromisso.</p></div><div class="accordion"><details><summary>Quanto tempo leva a higienização?<span>+</span></summary><p>O tempo varia conforme o tamanho, material e estado do estofado. Envie fotos para receber uma estimativa mais precisa.</p></details><details><summary>Quanto tempo demora para secar?<span>+</span></summary><p>A secagem depende do tecido, clima e ventilação do ambiente. Após avaliar o item, informamos a previsão para o seu caso.</p></details><details><summary>Todas as manchas saem?<span>+</span></summary><p>Muitas manchas podem ser reduzidas ou removidas, mas o resultado depende da origem e de quanto tempo estão no tecido.</p></details></div></div></section>
@@ -59,6 +66,30 @@ const services = [
       button?.addEventListener('click', () => { const open = menu?.classList.toggle('open'); button.setAttribute('aria-expanded', String(open)); });
       menu?.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => { menu.classList.remove('open'); button?.setAttribute('aria-expanded', 'false'); }));
       const year = document.querySelector('#year'); if (year) year.textContent = String(new Date().getFullYear());
+      const testimonialForm = document.querySelector('#testimonial-form');
+      const testimonialStatus = document.querySelector('#testimonial-status');
+      const testimonialList = document.querySelector('#testimonial-list');
+      const renderTestimonials = (items) => {
+        if (!testimonialList || !items.length) return;
+        testimonialList.replaceChildren(...items.map((item) => {
+          const article = document.createElement('article');
+          const quote = document.createElement('span'); quote.className = 'quote-mark'; quote.textContent = '“';
+          const title = document.createElement('h3'); title.textContent = item.name;
+          const message = document.createElement('p'); message.textContent = item.message;
+          const service = document.createElement('small'); service.textContent = item.service;
+          article.append(quote, title, message, service); return article;
+        }));
+      };
+      fetch('/api/testimonials').then((response) => response.ok ? response.json() : []).then(renderTestimonials).catch(() => {});
+      testimonialForm?.addEventListener('submit', async (event) => {
+        event.preventDefault(); testimonialStatus.textContent = 'Enviando…';
+        const data = Object.fromEntries(new FormData(testimonialForm));
+        try {
+          const response = await fetch('/api/testimonials', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(data) });
+          if (!response.ok) throw new Error();
+          testimonialForm.reset(); testimonialStatus.textContent = 'Obrigado! Seu depoimento foi salvo e aguarda aprovação.';
+        } catch { testimonialStatus.textContent = 'Não foi possível enviar agora. Tente novamente em instantes.'; }
+      });
     </script>
   </body>
 </html>
