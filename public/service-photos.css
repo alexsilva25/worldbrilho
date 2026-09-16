@@ -81,6 +81,18 @@
 .admin-reviews { display: grid; gap: 1rem; margin-top: 2rem; }
 .admin-reviews article { background: white; padding: 1.4rem; border-radius: 1rem; box-shadow: 0 10px 30px rgba(7,26,46,.08); }
 
+.booking { background: #eef7f7; }
+.booking-layout { display: grid; grid-template-columns: .8fr 1.2fr; gap: clamp(2rem, 6vw, 6rem); align-items: start; }
+.booking-layout h2 { margin: .4rem 0 1rem; font-family: Manrope, sans-serif; font-size: clamp(2rem, 4vw, 3.4rem); line-height: 1.05; }
+.booking-form { display: grid; gap: 1rem; background: white; padding: clamp(1.25rem, 4vw, 2.5rem); border-radius: 1.4rem; box-shadow: 0 18px 45px rgba(7,26,46,.1); }
+.booking-form label { display: grid; gap: .4rem; font-weight: 700; }
+.booking-form input, .booking-form select, .booking-form textarea { width: 100%; border: 1px solid #cbd7dc; border-radius: .7rem; padding: .85rem 1rem; background: white; color: #071a2e; font: inherit; }
+.booking-form textarea { resize: vertical; }
+.booking-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.booking-form .consent { display: flex; align-items: flex-start; gap: .65rem; font-size: .9rem; font-weight: 500; }
+.booking-form .consent input { width: auto; margin-top: .2rem; }
+@media (max-width: 760px) { .booking-layout { grid-template-columns: 1fr; } .booking-row { grid-template-columns: 1fr; } }
+
 .testimonial-cards h3 {
   margin-bottom: 14px;
 }
